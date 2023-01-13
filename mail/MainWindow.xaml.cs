@@ -20,6 +20,8 @@ using System.Windows.Controls.Primitives;
 using System.Threading;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Asn1.X509;
+using System.Reflection;
+using System.Diagnostics.Metrics;
 
 namespace mail
 {
@@ -29,8 +31,11 @@ namespace mail
     public partial class MainWindow : Window
     {
         User user = new User();
-       
+
         public ImapClient client { get; set; }
+        int pagesize = 5;
+        int page = 0;
+        int pagecount = 0;
         public MainWindow(User user)
         {
             InitializeComponent();
@@ -39,52 +44,24 @@ namespace mail
             connect();
 
         }
-        int pagesize = 15;
-        int page = 0;
-        private async void Filldatagrid(IMailFolder folder)
+
+
+        public void connect()
         {
-            List<Letter> leters = new List<Letter>();
+            client = new ImapClient();
+
+            client.Connect("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+
+            client.Authenticate(user.Email, user.Password);
+
+            fillfolderlist();
 
 
 
-
-            for (int j = 0, i = folder.Count - 1 - page * pagesize; i >= 0 && j < pagesize; j++, i--)
-            {
-                var message = folder.GetMessage(i);
-                Letter letter = new Letter();
-                
-               
-                letter.Subject = message.Subject;
-                letter.dateTime = message.Date.ToString("hh.mm");
-
-
-               
-
-                if (message.To.ToString() == user.Email)
-
-                    letter.email = message.From.ToString();
-
-                else
-
-                    letter.email = message.To.ToString();
-
-
-                leters.Add(letter);
-            }
-
-
-
-            dg.ItemsSource = leters;
-        }
-
-        private void SendBtnClick(object sender, RoutedEventArgs e)
-        {
-            SendWindow window = new SendWindow(user);
-            window.Show();
         }
         void fillfolderlist()
         {
-            this.ForldersListBox.Items.Clear(); 
+            this.ForldersListBox.Items.Clear();
             var folders = client.GetFolders(client.PersonalNamespaces[0]);
 
             foreach (var item in folders)
@@ -93,18 +70,78 @@ namespace mail
 
             }
         }
-        public void connect()
+        private  void Filldatagrid()
         {
-            client = new ImapClient();
-            
-                client.Connect("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+            List<Letter> leters = new List<Letter>();
 
-            client.Authenticate(user.Email, user.Password);
-         
-                fillfolderlist();
+            if (this.ForldersListBox.SelectedItem != null)
+            {
+
+                var folder = client.GetFolder(this.ForldersListBox.SelectedItem.ToString());
+
+                folder.Open(FolderAccess.ReadWrite);
+                
+               
 
 
-            
+
+
+                for (int j = 0, i = folder.Count - 1 - page * pagesize; i >= 0 && j < pagesize; j++, i--)
+                {
+                    var message = folder.GetMessage(i);
+                    Letter letter = new Letter();
+
+
+                    letter.Subject = message.Subject;
+                    letter.dateTime = message.Date.ToString("hh.mm");
+
+
+
+
+                    if (message.To.ToString() == user.Email)
+
+                        letter.email = message.From.ToString();
+
+                    else
+
+                        letter.email = message.To.ToString();
+
+
+                    leters.Add(letter);
+                }
+
+            }
+
+
+            dg.ItemsSource = leters;
+        }
+        private void Filldatagrid(IList<UniqueId> uids, IMailFolder folder)
+        {
+            nextbtn.IsEnabled = false;
+            previousbtn.IsEnabled = false;
+            List<Letter> leters = new List<Letter>();
+
+            foreach (var i in uids)
+            {
+               var message =folder.GetMessage(i);
+                Letter letter = new Letter();
+                letter.Subject = message.Subject;
+                letter.dateTime = message.Date.ToString("hh.mm");
+                if (message.To.ToString() == user.Email)
+
+                    letter.email = message.From.ToString();
+                else
+                    letter.email = message.To.ToString();
+
+
+                leters.Add(letter);
+            }
+            dg.ItemsSource = leters;
+        }
+        private void SendBtnClick(object sender, RoutedEventArgs e)
+        {
+            SendWindow window = new SendWindow(user);
+            window.Show();
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -120,16 +157,24 @@ namespace mail
 
         private void folderlistselected(object sender, SelectionChangedEventArgs e)
         {
+            nextbtn.IsEnabled = true;
+            previousbtn.IsEnabled = true;
 
-            if(((ListBox)sender).SelectedItem!=null)
+            if (this.ForldersListBox.SelectedItem != null)
             {
 
-            var folder = client.GetFolder(((ListBox)sender).SelectedItem.ToString());
+                var folder = client.GetFolder(this.ForldersListBox.SelectedItem.ToString());
+                folder.Open(FolderAccess.ReadWrite);
+                
+                pagecount = (int)Math.Ceiling((float)(folder.Count) / (float)(pagesize));
 
-             folder.Open(FolderAccess.ReadOnly);
-            Filldatagrid(folder);
-             folder.Close();
+                Filldatagrid();
+
             }
+            if (page == 0)
+                previousbtn.IsEnabled = false;
+            if (page == pagecount)
+                nextbtn.IsEnabled = false;
 
 
         }
@@ -139,25 +184,64 @@ namespace mail
             Letter letter = (Letter)dg.SelectedItem;
 
             var folder = client.GetFolder(this.ForldersListBox.SelectedItem.ToString());
-            folder.Open(FolderAccess.ReadOnly);
+            folder.Open(FolderAccess.ReadWrite);
 
-            var message =folder.First(m=>m.Subject== letter.Subject);
-           
-            MessageWindow messageWindow = new MessageWindow(message,user);
-            
-            messageWindow.Owner= this;
+            var message = folder.First(m => m.Subject == letter.Subject);
+
+            MessageWindow messageWindow = new MessageWindow(message, user);
+
+            messageWindow.Owner = this;
             messageWindow.ShowDialog();
-            
+
         }
 
-        private void refrechbtbclick(object sender, RoutedEventArgs e)
+        private void refreshbtbclick(object sender, RoutedEventArgs e)
         {
-            this.ForldersListBox.SelectedItem= null;
-            dg.SelectedItem= null;
-            dg.ItemsSource= null;
-           client.Disconnect(true);
+            this.ForldersListBox.SelectedItem = null;
+            dg.SelectedItem = null;
+            dg.ItemsSource = null;
+            client.Disconnect(true);
             connect();
 
+
+        }
+
+        private void nextbtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (page < pagecount)
+            {
+                page++;
+                previousbtn.IsEnabled = true;
+            }
+
+            if (page == pagecount-1)
+                nextbtn.IsEnabled = false;
+             Filldatagrid();
+        }
+
+        private void previousbtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (page > 0)
+            {
+                page--;
+                nextbtn.IsEnabled = true;
+            }
+
+            if (page == 0)
+                previousbtn.IsEnabled = false;
+            Filldatagrid();
+
+        }
+
+        private void searchbtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (SeachTxtBox.Text != null)
+            {
+            var folder = client.GetFolder(this.ForldersListBox.SelectedItem.ToString());
+                IList<UniqueId> uids = folder.Search(SearchQuery.MessageContains(SeachTxtBox.Text));
+                Filldatagrid(uids, folder);
+            }
+            
             
         }
     }

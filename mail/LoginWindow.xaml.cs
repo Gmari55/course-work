@@ -1,4 +1,5 @@
-﻿using MailKit.Net.Smtp;
+﻿using MailKit.Net.Imap;
+using MailKit.Net.Smtp;
 using MailKit.Security;
 using System;
 using System.Windows;
@@ -18,23 +19,23 @@ namespace mail
 
         private void LoginBtnClick(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                var client = new SmtpClient();
-                client.Connect("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
+            using(var client =new ImapClient())
+            { 
+                client.Connect("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
                 client.Authenticate(EmailTxtBox.Text, PasswordTxtBox.Password);
+                
+                if(client.IsAuthenticated)
+                {
+
                 User user = new User();
                 user.Email = EmailTxtBox.Text;
                 user.Password = PasswordTxtBox.Password;
                 MainWindow window = new MainWindow(user);
                 window.Show();
                 this.Close();
+                }
             }
-            catch (Exception)
-            {
-                MessageBox.Show("uncorect login or password");
-                throw;
-            }
+            
 
         }
 

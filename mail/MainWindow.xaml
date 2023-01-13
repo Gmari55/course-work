@@ -9,7 +9,7 @@
     <Grid>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
-                <MenuItem Header="Refresh" Click="refrechbtbclick"></MenuItem>
+                <MenuItem Header="Refresh" Click="refreshbtbclick"></MenuItem>
             </Menu>
             <StackPanel DockPanel.Dock="Left">
                 <Button x:Name="SendBtn" Content="Send" HorizontalAlignment="Left" Height="34" Margin="10,26,0,0" VerticalAlignment="Top" Width="153" Click="SendBtnClick" FontSize="18"/>
@@ -17,10 +17,10 @@
             </StackPanel>
             <DockPanel DockPanel.Dock="Top" >
 
-                <Button Content="&gt;" x:Name="nextbtn" DockPanel.Dock="Right"></Button>
-                <Button Content="&lt;" x:Name="previousbtn" DockPanel.Dock="Right"></Button>
-                <Button Content="Search"  x:Name="searchbtn" DockPanel.Dock="Right"></Button>
-                <TextBlock Margin="5">Search</TextBlock>
+                <Button Padding="3" Content="&gt;" x:Name="nextbtn" DockPanel.Dock="Right" Click="nextbtn_Click"></Button>
+                <Button Padding="3" Content="&lt;" x:Name="previousbtn" DockPanel.Dock="Right" Click="previousbtn_Click"></Button>
+                <Button Content="Search"  x:Name="searchbtn" DockPanel.Dock="Right" Click="searchbtn_Click"></Button>
+                <TextBox x:Name="SeachTxtBox" Margin="5">Search</TextBox>
             </DockPanel>
             <DataGrid 
                 x:Name="dg" 
