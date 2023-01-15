@@ -6,21 +6,30 @@
         xmlns:local="clr-namespace:mail"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Margin="5">
         <DockPanel>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="Refresh" Click="refreshbtbclick"></MenuItem>
             </Menu>
             <StackPanel DockPanel.Dock="Left">
-                <Button x:Name="SendBtn" Content="Send" HorizontalAlignment="Left" Height="34" Margin="10,26,0,0" VerticalAlignment="Top" Width="153" Click="SendBtnClick" FontSize="18"/>
-                <ListBox  x:Name="ForldersListBox" SelectionChanged="folderlistselected"></ListBox>
+                <Button x:Name="SendBtn" Content="Send"  Height="34" Margin="5"  Width="153" Click="SendBtnClick" FontSize="18"/>
+                <ListBox  x:Name="ForldersListBox" SelectionChanged="folderlistselected">
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete" Click="deletefoldercclick"/>
+                            
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+                </ListBox>
+                <Button Click="Addfolder" Margin="5">Add labels</Button>
+                <TextBox x:Name="addfoldertxt"></TextBox>
             </StackPanel>
             <DockPanel DockPanel.Dock="Top" >
 
                 <Button Padding="3" Content="&gt;" x:Name="nextbtn" DockPanel.Dock="Right" Click="nextbtn_Click"></Button>
                 <Button Padding="3" Content="&lt;" x:Name="previousbtn" DockPanel.Dock="Right" Click="previousbtn_Click"></Button>
                 <Button Content="Search"  x:Name="searchbtn" DockPanel.Dock="Right" Click="searchbtn_Click"></Button>
-                <TextBox x:Name="SeachTxtBox" Margin="5">Search</TextBox>
+                <TextBox x:Name="SearchTxtBox" Margin="5">Search</TextBox>
             </DockPanel>
             <DataGrid 
                 x:Name="dg" 
@@ -30,13 +39,25 @@
                 VerticalGridLinesBrush="White"
                 RowHeaderWidth="0"
                 ColumnHeaderHeight="0"
-                MouseDoubleClick="readmessage">
+                MouseDoubleClick="readmessage"
+                AutoGenerateColumns="False"
+               >
 
                 <DataGrid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Send message" Click="MenuItem_Click" />
+                        <MenuItem Header="Reply" Click="MenuItem_Click" />
+                        <MenuItem Header="Delete" Click="deletemessageclick"/>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    
+                <DataGridTextColumn Binding="{Binding Path=email}"/>
+                <DataGridTextColumn Binding="{Binding Path=Subject}"/>
+                <DataGridTextColumn Binding="{Binding Path=dateTime}"/>
+                
+                    
+                </DataGrid.Columns>
+
 
             </DataGrid>
 

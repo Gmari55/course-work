@@ -25,18 +25,8 @@
             </TextBlock.Style>
         </TextBlock>
         <PasswordBox x:Name="PasswordTxtBox"  Margin="35,20,35,0"   VerticalAlignment="Center"></PasswordBox>
-        <TextBlock IsHitTestVisible="False" Text="App Password" VerticalAlignment="Center"  Margin="35,20,35,0" Foreground="DarkGray">
-            <TextBlock.Style>
-                <Style TargetType="{x:Type TextBlock}">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Text, ElementName=PasswordTxtBox}" Value="">
-                            <Setter Property="Visibility" Value="Visible"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
+       
+        
         <Button x:Name="LoginBtn" Click="LoginBtnClick" Content="Login"   Margin="70,100,70,0" VerticalAlignment="center"/>
         
     </Grid>

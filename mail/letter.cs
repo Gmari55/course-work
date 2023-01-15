@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace mail
 {
-     public class Letter
+    public class Letter
     {
-     
-        public string email { get; set; }   
+        public string Id { get; set; }
+        public string email { get; set; }
         public string Subject { get; set; }
         public string dateTime { get; set; }
     }

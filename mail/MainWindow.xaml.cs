@@ -22,6 +22,7 @@ using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Asn1.X509;
 using System.Reflection;
 using System.Diagnostics.Metrics;
+using System.Security.Cryptography;
 
 namespace mail
 {
@@ -70,8 +71,10 @@ namespace mail
 
             }
         }
-        private  void Filldatagrid()
+        private void Filldatagrid()
         {
+            
+
             List<Letter> leters = new List<Letter>();
 
             if (this.ForldersListBox.SelectedItem != null)
@@ -80,8 +83,8 @@ namespace mail
                 var folder = client.GetFolder(this.ForldersListBox.SelectedItem.ToString());
 
                 folder.Open(FolderAccess.ReadWrite);
-                
-               
+
+
 
 
 
@@ -91,7 +94,7 @@ namespace mail
                     var message = folder.GetMessage(i);
                     Letter letter = new Letter();
 
-
+                    letter.Id = message.MessageId;
                     letter.Subject = message.Subject;
                     letter.dateTime = message.Date.ToString("hh.mm");
 
@@ -123,7 +126,7 @@ namespace mail
 
             foreach (var i in uids)
             {
-               var message =folder.GetMessage(i);
+                var message = folder.GetMessage(i);
                 Letter letter = new Letter();
                 letter.Subject = message.Subject;
                 letter.dateTime = message.Date.ToString("hh.mm");
@@ -146,8 +149,9 @@ namespace mail
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            string mail;
+
             Letter letter = dg.SelectedItem as Letter;
+           
 
             SendWindow sendWindow = new SendWindow(user, letter.email);
             sendWindow.Show();
@@ -157,22 +161,31 @@ namespace mail
 
         private void folderlistselected(object sender, SelectionChangedEventArgs e)
         {
-            nextbtn.IsEnabled = true;
-            previousbtn.IsEnabled = true;
+            page = 0;
+            pagecount = 0;
+
+            nextbtn.IsEnabled = false;
+            previousbtn.IsEnabled = false;
 
             if (this.ForldersListBox.SelectedItem != null)
             {
 
                 var folder = client.GetFolder(this.ForldersListBox.SelectedItem.ToString());
                 folder.Open(FolderAccess.ReadWrite);
-                
+
                 pagecount = (int)Math.Ceiling((float)(folder.Count) / (float)(pagesize));
 
                 Filldatagrid();
 
             }
+
+            
             if (page == 0)
                 previousbtn.IsEnabled = false;
+            else
+            previousbtn.IsEnabled = true;
+            if(page<pagecount)
+               nextbtn.IsEnabled = true;
             if (page == pagecount)
                 nextbtn.IsEnabled = false;
 
@@ -186,7 +199,8 @@ namespace mail
             var folder = client.GetFolder(this.ForldersListBox.SelectedItem.ToString());
             folder.Open(FolderAccess.ReadWrite);
 
-            var message = folder.First(m => m.Subject == letter.Subject);
+            var message = folder.First(m => m.MessageId == letter.Id);
+            
 
             MessageWindow messageWindow = new MessageWindow(message, user);
 
@@ -197,12 +211,20 @@ namespace mail
 
         private void refreshbtbclick(object sender, RoutedEventArgs e)
         {
+
+            refresh();
+            
+
+        }
+        private void refresh()
+        {
             this.ForldersListBox.SelectedItem = null;
             dg.SelectedItem = null;
             dg.ItemsSource = null;
             client.Disconnect(true);
             connect();
-
+            page = 0;
+            pagecount = 0;
 
         }
 
@@ -214,9 +236,9 @@ namespace mail
                 previousbtn.IsEnabled = true;
             }
 
-            if (page == pagecount-1)
+            if (page == pagecount - 1)
                 nextbtn.IsEnabled = false;
-             Filldatagrid();
+            Filldatagrid();
         }
 
         private void previousbtn_Click(object sender, RoutedEventArgs e)
@@ -235,14 +257,46 @@ namespace mail
 
         private void searchbtn_Click(object sender, RoutedEventArgs e)
         {
-            if (SeachTxtBox.Text != null)
+            if (SearchTxtBox.Text != null)
             {
-            var folder = client.GetFolder(this.ForldersListBox.SelectedItem.ToString());
-                IList<UniqueId> uids = folder.Search(SearchQuery.MessageContains(SeachTxtBox.Text));
+                var folder = client.GetFolder(this.ForldersListBox.SelectedItem.ToString());
+                IList<UniqueId> uids = folder.Search(SearchQuery.MessageContains(SearchTxtBox.Text));
                 Filldatagrid(uids, folder);
             }
+
+
+        }
+
+        private void deletefoldercclick(object sender, RoutedEventArgs e)
+        {
+            var personal = client.GetFolder(client.PersonalNamespaces[0]);
+            var folder = personal.GetSubfolder(this.ForldersListBox.SelectedItem.ToString());
+            folder.Delete();
+            refresh();
+        }
+
+        private void Addfolder(object sender, RoutedEventArgs e)
+        {
+            var folder = client.GetFolder(client.PersonalNamespaces[0]);
+            var mailkit = folder.Create(addfoldertxt.Text, false);
+
             
-            
+        }
+
+        private void deletemessageclick(object sender, RoutedEventArgs e)
+        {
+            var folder = client.GetFolder(this.ForldersListBox.SelectedItem.ToString());
+            Letter letter = (Letter)dg.SelectedItem;
+
+
+            var uids = folder.Search(SearchQuery.HeaderContains("Message-Id",letter.Id));
+            foreach (var uid in uids)
+            {
+
+                folder.AddFlags(new UniqueId[] { uid }, MessageFlags.Deleted,true);
+                folder.Expunge();   
+            }
+
         }
     }
 }
