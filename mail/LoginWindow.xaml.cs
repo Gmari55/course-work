@@ -19,26 +19,37 @@ namespace mail
 
         private void LoginBtnClick(object sender, RoutedEventArgs e)
         {
-            using(var client =new ImapClient())
-            { 
-                client.Connect("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
-                client.Authenticate(EmailTxtBox.Text, PasswordTxtBox.Password);
-                
-                if(client.IsAuthenticated)
+            using (var client = new ImapClient())
+            {
+                try
                 {
 
-                User user = new User();
-                user.Email = EmailTxtBox.Text;
-                user.Password = PasswordTxtBox.Password;
-                MainWindow window = new MainWindow(user);
-                window.Show();
-                this.Close();
+                    client.Connect("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+                    client.Authenticate(EmailTxtBox.Text, PasswordTxtBox.Password);
+
+
+
+                    if (client.IsAuthenticated)
+                    {
+
+                        User user = new User();
+                        user.Email = EmailTxtBox.Text;
+                        user.Password = PasswordTxtBox.Password;
+                        MainWindow window = new MainWindow(user);
+                        window.Show();
+                        this.Close();
+                    }
                 }
+                catch
+                {
+                    MessageBox.Show("invalid login or password");
+                }
+
             }
-            
+
 
         }
 
-        
+
     }
 }

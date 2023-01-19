@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="MailKit" Version="3.4.3" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.7.1" />
     <PackageReference Include="MimeKit" Version="3.4.3" />
   </ItemGroup>
 

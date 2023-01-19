@@ -13,16 +13,21 @@
             </Menu>
             <StackPanel DockPanel.Dock="Left">
                 <Button x:Name="SendBtn" Content="Send"  Height="34" Margin="5"  Width="153" Click="SendBtnClick" FontSize="18"/>
-                <ListBox  x:Name="ForldersListBox" SelectionChanged="folderlistselected">
+                <Button Click="Addfolder" Margin="5">Add labels</Button>
+                <TextBox x:Name="addfoldertxt"></TextBox>
+                <ScrollViewer>
+                    
+                <ListBox Margin="1"
+                         x:Name="ForldersListBox" 
+                         SelectionChanged="folderlistselected">
+                    
                     <ListBox.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Delete" Click="deletefoldercclick"/>
-                            
                         </ContextMenu>
                     </ListBox.ContextMenu>
                 </ListBox>
-                <Button Click="Addfolder" Margin="5">Add labels</Button>
-                <TextBox x:Name="addfoldertxt"></TextBox>
+                </ScrollViewer>
             </StackPanel>
             <DockPanel DockPanel.Dock="Top" >
 

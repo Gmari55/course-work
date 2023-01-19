@@ -3,33 +3,60 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:mail"
-        mc:Ignorable="d"
-        Title="LoginWindow" Height="250" Width="230">
-
-
-
-    <Grid >
-
-        <TextBox   x:Name="EmailTxtBox"    Margin="35,0,35,60" TextWrapping="Wrap"  VerticalAlignment="Center">potapchuk.maks@gmail.com</TextBox>
-        <TextBlock IsHitTestVisible="False" Text="Email" VerticalAlignment="Center" Margin="35,0,35,60" Foreground="DarkGray">
-            <TextBlock.Style>
-                <Style TargetType="{x:Type TextBlock}">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Text, ElementName=EmailTxtBox}" Value="">
-                            <Setter Property="Visibility" Value="Visible"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
-        <PasswordBox x:Name="PasswordTxtBox"  Margin="35,20,35,0"   VerticalAlignment="Center"></PasswordBox>
-       
+      
         
-        <Button x:Name="LoginBtn" Click="LoginBtnClick" Content="Login"   Margin="70,100,70,0" VerticalAlignment="center"/>
+         xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
+            
+           
+        Title="LoginWindow" Height="270" Width="250"
         
-    </Grid>
+         
+     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+     TextElement.FontWeight="Regular"
+     TextElement.FontSize="15"
+     TextOptions.TextFormattingMode="Ideal"
+     TextOptions.TextRenderingMode="Auto"
+     Background="{DynamicResource MaterialDesignPaper}"
+     FontFamily="{DynamicResource MaterialDesignFont}">
+
+
+
+    <StackPanel Orientation="Vertical">
+
+
+        <TextBox   x:Name="EmailTxtBox" 
+                   TextWrapping="NoWrap"
+                   Margin="20" 
+                   VerticalAlignment="Center"
+                   Style="{StaticResource MaterialDesignOutlinedTextBox}">
+            <material:HintAssist.Hint>
+                <StackPanel Orientation="Horizontal">
+                    <material:PackIcon VerticalAlignment="Center" Kind="User" />
+                    <TextBlock Text="Email" />
+                </StackPanel>
+            </material:HintAssist.Hint>
+
+        </TextBox>
+
+
+        <PasswordBox x:Name="PasswordTxtBox" 
+                     Margin="20,0,20,0" 
+                     VerticalAlignment="Center"
+                     Style="{StaticResource MaterialDesignOutlinedRevealPasswordBox}">
+            <material:HintAssist.Hint>
+                <StackPanel HorizontalAlignment="Left"  Orientation="Horizontal">
+                    <material:PackIcon VerticalAlignment="Center" Kind="Key" />
+                    <TextBlock Text="App Password" />
+                </StackPanel>
+            </material:HintAssist.Hint>
+        </PasswordBox>
+        
+
+      
+
+        <Button x:Name="LoginBtn" Click="LoginBtnClick" Content="Login"   Margin="20" VerticalAlignment="center"/>
+
+    </StackPanel>
 
 
 

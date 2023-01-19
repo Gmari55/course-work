@@ -73,7 +73,7 @@ namespace mail
         }
         private void Filldatagrid()
         {
-            
+
 
             List<Letter> leters = new List<Letter>();
 
@@ -151,7 +151,7 @@ namespace mail
         {
 
             Letter letter = dg.SelectedItem as Letter;
-           
+
 
             SendWindow sendWindow = new SendWindow(user, letter.email);
             sendWindow.Show();
@@ -179,13 +179,13 @@ namespace mail
 
             }
 
-            
+
             if (page == 0)
                 previousbtn.IsEnabled = false;
             else
-            previousbtn.IsEnabled = true;
-            if(page<pagecount)
-               nextbtn.IsEnabled = true;
+                previousbtn.IsEnabled = true;
+            if (page < pagecount)
+                nextbtn.IsEnabled = true;
             if (page == pagecount)
                 nextbtn.IsEnabled = false;
 
@@ -200,7 +200,7 @@ namespace mail
             folder.Open(FolderAccess.ReadWrite);
 
             var message = folder.First(m => m.MessageId == letter.Id);
-            
+
 
             MessageWindow messageWindow = new MessageWindow(message, user);
 
@@ -213,7 +213,7 @@ namespace mail
         {
 
             refresh();
-            
+
 
         }
         private void refresh()
@@ -257,11 +257,15 @@ namespace mail
 
         private void searchbtn_Click(object sender, RoutedEventArgs e)
         {
-            if (SearchTxtBox.Text != null)
+            if (SearchTxtBox.Text != null && ForldersListBox.SelectedItem != null)
             {
                 var folder = client.GetFolder(this.ForldersListBox.SelectedItem.ToString());
                 IList<UniqueId> uids = folder.Search(SearchQuery.MessageContains(SearchTxtBox.Text));
                 Filldatagrid(uids, folder);
+            }
+            else
+            {
+                Filldatagrid();
             }
 
 
@@ -277,10 +281,15 @@ namespace mail
 
         private void Addfolder(object sender, RoutedEventArgs e)
         {
-            var folder = client.GetFolder(client.PersonalNamespaces[0]);
-            var mailkit = folder.Create(addfoldertxt.Text, false);
+            if (addfoldertxt.Text != "")
+            {
 
-            
+                var folder = client.GetFolder(client.PersonalNamespaces[0]);
+                var mailkit = folder.Create(addfoldertxt.Text, false);
+                refresh();
+            }
+
+
         }
 
         private void deletemessageclick(object sender, RoutedEventArgs e)
@@ -289,12 +298,12 @@ namespace mail
             Letter letter = (Letter)dg.SelectedItem;
 
 
-            var uids = folder.Search(SearchQuery.HeaderContains("Message-Id",letter.Id));
+            var uids = folder.Search(SearchQuery.HeaderContains("Message-Id", letter.Id));
             foreach (var uid in uids)
             {
 
-                folder.AddFlags(new UniqueId[] { uid }, MessageFlags.Deleted,true);
-                folder.Expunge();   
+                folder.AddFlags(new UniqueId[] { uid }, MessageFlags.Deleted, true);
+                folder.Expunge();
             }
 
         }
