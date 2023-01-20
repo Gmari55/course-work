@@ -17,7 +17,7 @@ namespace mail
         MimeMessage MimeMessage;
         User user;
         ImapClient client;
-        List<string> list = new List<string>();
+        List<string> listAttachment = new List<string>();
         public MessageWindow(MimeMessage mimeMessage, User user)
         {
             InitializeComponent();
@@ -41,9 +41,9 @@ namespace mail
             foreach (var attachment in MimeMessage.Attachments)
             {
                 var fileName = attachment.ContentDisposition?.FileName ?? attachment.ContentType.Name;
-                list.Add(fileName);
+                listAttachment.Add(fileName);
             }
-            Attlistbox.ItemsSource = list;
+            Attlistbox.ItemsSource = listAttachment;
         }
 
         private void forwardbtnclick(object sender, RoutedEventArgs e)
@@ -69,20 +69,24 @@ namespace mail
                 {
                     var fb = new FolderBrowserDialog();
                    string fullname;
-                    fb.
-                    using (var stream = File.Create(fileName))
+                    if (fb.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
-                        if (attachment is MessagePart)
+                        fullname = fb.SelectedPath + "\\" + fileName;
+                        using (var stream = File.Create(fullname))
                         {
-                            var rfc822 = (MessagePart)attachment;
+                            if (attachment is MessagePart)
+                            {
+                                var rfc822 = (MessagePart)attachment;
 
-                            rfc822.Message.WriteTo(stream);
-                        }
-                        else
-                        {
-                            var part = (MimePart)attachment;
+                                rfc822.Message.WriteTo(stream);
+                            }
+                            else
+                            {
+                                var part = (MimePart)attachment;
 
-                            part.Content.DecodeTo(stream);
+                                part.Content.DecodeTo(stream);
+                            }
+                            stream.Close();
                         }
                     }
                 }

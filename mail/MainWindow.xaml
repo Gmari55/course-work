@@ -1,23 +1,22 @@
 ﻿<Window x:Class="mail.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                     xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
-
-        xmlns:local="clr-namespace:mail"
-        mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-     TextElement.FontWeight="Regular"
-     TextElement.FontSize="15"
-     TextOptions.TextFormattingMode="Ideal"
-     TextOptions.TextRenderingMode="Auto"
-     Background="{DynamicResource MaterialDesignPaper}"
-     FontFamily="{DynamicResource MaterialDesignFont}">
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Style="{StaticResource MaterialDesignWindow}"
+        TextElement.Foreground="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="15"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
     <Grid Margin="5">
         <DockPanel>
-            
+
             <Menu DockPanel.Dock="Top" 
                   material:MenuAssist.TopLevelMenuItemHeight="20">
                 <MenuItem Header="Refresh" Click="refreshbtbclick"></MenuItem>
@@ -26,25 +25,25 @@
                 <Button DockPanel.Dock="Top" x:Name="SendBtn" Content="Send"  Height="34" Margin="5"  Width="153" Click="SendBtnClick" FontSize="18"/>
                 <Button DockPanel.Dock="Top" Click="Addfolder" Margin="5">Add labels</Button>
                 <TextBox DockPanel.Dock="Top" x:Name="addfoldertxt"></TextBox>
-                
-                    
+
+
                 <ListBox Margin="1"
                          x:Name="ForldersListBox" 
                          SelectionChanged="folderlistselected">
-                    
+
                     <ListBox.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Delete" Click="deletefoldercclick"/>
                         </ContextMenu>
                     </ListBox.ContextMenu>
                 </ListBox>
-               
+
             </DockPanel>
             <DockPanel DockPanel.Dock="Top" >
 
                 <Button Padding="3" Content="&gt;" x:Name="nextbtn" DockPanel.Dock="Right" Click="nextbtn_Click"></Button>
                 <Button Padding="3" Content="&lt;" x:Name="previousbtn" DockPanel.Dock="Right" Click="previousbtn_Click"></Button>
-              
+
                 <Button
                     DockPanel.Dock="Right"
                     Click="searchbtn_Click"
@@ -53,7 +52,7 @@
               Kind="Search"
               Opacity=".56" />
                 </Button>
-                <TextBox x:Name="SearchTxtBox" Margin="5">Search</TextBox>
+                <TextBox x:Name="SearchTxtBox" Margin="5" material:HintAssist.Hint="Search"></TextBox>
             </DockPanel>
             <DataGrid 
                 x:Name="dg" 
@@ -65,21 +64,29 @@
                 ColumnHeaderHeight="0"
                 MouseDoubleClick="readmessage"
                 AutoGenerateColumns="False"
+                Padding="0"
+                
                >
+                <DataGrid.CellStyle>
 
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="0"/>
+                    </Style>
+                </DataGrid.CellStyle>
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Reply" Click="MenuItem_Click" />
                         <MenuItem Header="Delete" Click="deletemessageclick"/>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
-                <DataGrid.Columns>
-                    
-                <DataGridTextColumn Binding="{Binding Path=email}"/>
-                <DataGridTextColumn Binding="{Binding Path=Subject}"/>
-                <DataGridTextColumn Binding="{Binding Path=dateTime}"/>
-                
-                    
+                <DataGrid.Columns  >
+
+
+                    <DataGridTextColumn Width = "SizeToCells" Binding="{Binding Path=email}"/>
+                    <DataGridTextColumn  Binding="{Binding Path=Subject}"/>
+                    <DataGridTextColumn Width = "SizeToCells" Binding="{Binding Path=dateTime}"/>
+
+
                 </DataGrid.Columns>
 
 
