@@ -118,6 +118,7 @@ namespace mail
 
             dg.ItemsSource = leters;
         }
+       
         private void Filldatagrid(IList<UniqueId> uids, IMailFolder folder)
         {
             nextbtn.IsEnabled = false;
@@ -186,6 +187,9 @@ namespace mail
                 previousbtn.IsEnabled = true;
             if (page < pagecount)
                 nextbtn.IsEnabled = true;
+            if(pagecount==1)
+                nextbtn.IsEnabled = false;
+     
             if (page == pagecount)
                 nextbtn.IsEnabled = false;
 
@@ -305,6 +309,8 @@ namespace mail
                 folder.AddFlags(new UniqueId[] { uid }, MessageFlags.Deleted, true);
                 folder.Expunge();
             }
+            refresh();
+            
 
         }
     }

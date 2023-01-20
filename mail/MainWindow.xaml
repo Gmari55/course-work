@@ -3,19 +3,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
+
         xmlns:local="clr-namespace:mail"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+     TextElement.FontWeight="Regular"
+     TextElement.FontSize="15"
+     TextOptions.TextFormattingMode="Ideal"
+     TextOptions.TextRenderingMode="Auto"
+     Background="{DynamicResource MaterialDesignPaper}"
+     FontFamily="{DynamicResource MaterialDesignFont}">
     <Grid Margin="5">
         <DockPanel>
-            <Menu DockPanel.Dock="Top">
+            
+            <Menu DockPanel.Dock="Top" 
+                  material:MenuAssist.TopLevelMenuItemHeight="20">
                 <MenuItem Header="Refresh" Click="refreshbtbclick"></MenuItem>
             </Menu>
-            <StackPanel DockPanel.Dock="Left">
-                <Button x:Name="SendBtn" Content="Send"  Height="34" Margin="5"  Width="153" Click="SendBtnClick" FontSize="18"/>
-                <Button Click="Addfolder" Margin="5">Add labels</Button>
-                <TextBox x:Name="addfoldertxt"></TextBox>
-                <ScrollViewer>
+            <DockPanel DockPanel.Dock="Left">
+                <Button DockPanel.Dock="Top" x:Name="SendBtn" Content="Send"  Height="34" Margin="5"  Width="153" Click="SendBtnClick" FontSize="18"/>
+                <Button DockPanel.Dock="Top" Click="Addfolder" Margin="5">Add labels</Button>
+                <TextBox DockPanel.Dock="Top" x:Name="addfoldertxt"></TextBox>
+                
                     
                 <ListBox Margin="1"
                          x:Name="ForldersListBox" 
@@ -27,13 +38,21 @@
                         </ContextMenu>
                     </ListBox.ContextMenu>
                 </ListBox>
-                </ScrollViewer>
-            </StackPanel>
+               
+            </DockPanel>
             <DockPanel DockPanel.Dock="Top" >
 
                 <Button Padding="3" Content="&gt;" x:Name="nextbtn" DockPanel.Dock="Right" Click="nextbtn_Click"></Button>
                 <Button Padding="3" Content="&lt;" x:Name="previousbtn" DockPanel.Dock="Right" Click="previousbtn_Click"></Button>
-                <Button Content="Search"  x:Name="searchbtn" DockPanel.Dock="Right" Click="searchbtn_Click"></Button>
+              
+                <Button
+                    DockPanel.Dock="Right"
+                    Click="searchbtn_Click"
+            Style="{StaticResource MaterialDesignToolButton}">
+                    <material:PackIcon
+              Kind="Search"
+              Opacity=".56" />
+                </Button>
                 <TextBox x:Name="SearchTxtBox" Margin="5">Search</TextBox>
             </DockPanel>
             <DataGrid 

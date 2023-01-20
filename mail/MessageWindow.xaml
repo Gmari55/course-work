@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:mail"
+                     xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
+        
         mc:Ignorable="d"
         Title="MessageWindow" Height="450" Width="800">
     <DockPanel Margin="10">
@@ -15,12 +17,48 @@
                 <Label x:Name="To" DockPanel.Dock="Top" FontSize="14" Padding="2">To:</Label>
             </DockPanel>
             <DockPanel DockPanel.Dock="Right">
-                <Label DockPanel.Dock="Top" x:Name="date">dgf</Label>
+                <Label DockPanel.Dock="Top" x:Name="date"></Label>
             </DockPanel>
             <DockPanel DockPanel.Dock="Top">
-                <Button Click="replybtnclicl" DockPanel.Dock="Top" MaxHeight="20" MaxWidth="50"  >Reply</Button>
-                <Button Click="forwardbtnclick"   DockPanel.Dock="Top" MaxHeight="20" MaxWidth="50" >Forward</Button>
+                <Button Click="replybtnclicl" Padding="0" DockPanel.Dock="Top" MaxHeight="20" MaxWidth="60"  >Reply</Button>
+                <Button Click="forwardbtnclick" Padding="0"   DockPanel.Dock="Top" MaxHeight="20" MaxWidth="60" >Forward</Button>
             </DockPanel>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Left">
+            <ListBox x:Name="Attlistbox" MaxWidth="120" >
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel >
+                            <Button x:Name="downloadbtn" 
+                                 DockPanel.Dock="Right"
+                                 Click="DownloadAttClick"
+                                   >
+
+                                <Button.Style >
+                                    <Style TargetType="{x:Type Button}" >
+                                        <Setter Property="Visibility" Value="Hidden"  />
+
+                                        <Style.Triggers>
+
+                                            <DataTrigger  Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}},Path=IsMouseOver}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"  />
+
+
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style >
+
+                                <material:PackIcon Kind="Download" />
+                            </Button>
+                            <TextBlock x:Name="TxtContent" Text="{Binding}" Grid.Column="1"></TextBlock>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+
+            </ListBox>
         </DockPanel>
         <TextBox x:Name="Text"></TextBox>
     </DockPanel>

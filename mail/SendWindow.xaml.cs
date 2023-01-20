@@ -1,5 +1,7 @@
 ﻿using Microsoft.Win32;
 using MimeKit;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -13,13 +15,14 @@ namespace mail
 
         User user = new User();
         MailMessage Mail = new MailMessage();
+        List<AttachmentList> attachments = new List<AttachmentList>();
         public SendWindow(User user)
         {
             InitializeComponent();
             this.user = user;
 
         }
-        public SendWindow(User user,string address)
+        public SendWindow(User user, string address)
         {
             InitializeComponent();
             this.user = user;
@@ -37,16 +40,16 @@ namespace mail
             bodyTxtBox.Text = "------Forwarded message------\n";
             bodyTxtBox.Text += "From: " + mimeMessage.From.ToString() + "\n";
             bodyTxtBox.Text += "Date:" + mimeMessage.Date.ToString() + "\n";
-            if(mimeMessage.Subject != null)
-            bodyTxtBox.Text += "Subject: " + mimeMessage.Subject.ToString() + "\n";
+            if (mimeMessage.Subject != null)
+                bodyTxtBox.Text += "Subject: " + mimeMessage.Subject.ToString() + "\n";
             else
                 bodyTxtBox.Text += "Subject:\n";
             bodyTxtBox.Text += "To: " + mimeMessage.To.ToString() + "\n\n\n";
-            if(mimeMessage.Body != null)
-            bodyTxtBox.Text += mimeMessage.TextBody.ToString();
+            if (mimeMessage.Body != null)
+                bodyTxtBox.Text += mimeMessage.TextBody.ToString();
 
 
-          
+
 
         }
 
@@ -66,6 +69,10 @@ namespace mail
                 EnableSsl = true
             };
 
+            for (int i = 0; i < attachments.Count; i++)
+            {
+                 Mail.Attachments.Add(new Attachment(attachments[i].FullName));
+            }
             client.Send(Mail);
             this.Close();
         }
@@ -76,7 +83,15 @@ namespace mail
         {
             OpenFileDialog dialog = new OpenFileDialog();
             if (dialog.ShowDialog() == true)
-                Mail.Attachments.Add(new Attachment(dialog.FileName));
+            {
+                string fullname = dialog.FileName;
+                string name = Path.GetFileNameWithoutExtension(fullname);
+                attachments.Add(new AttachmentList(fullname, name));
+                Attlistbox.ItemsSource = null;
+                Attlistbox.ItemsSource = attachments;
+
+                
+            }
         }
 
 
@@ -99,5 +114,18 @@ namespace mail
 
 
         }
+
+        private void DeleteAttachmentClick(object sender, RoutedEventArgs e)
+        {
+            AttachmentList item = (AttachmentList)(sender as Button).DataContext;
+            attachments.Remove(item);
+            Attlistbox.ItemsSource = null;
+            Attlistbox.ItemsSource = attachments;
+
+        }
+
+
+
+       
     }
 }
