@@ -4,10 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:mail"
-                     xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
-        
-        mc:Ignorable="d"
-        Title="MessageWindow" Height="450" Width="800">
+        xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
+         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Title="MessageWindow" Height="450" Width="800"
+     TextElement.FontWeight="Regular"
+     TextElement.FontSize="15"
+     TextOptions.TextFormattingMode="Ideal"
+     TextOptions.TextRenderingMode="Auto"
+     Background="{DynamicResource MaterialDesignPaper}"
+     FontFamily="{DynamicResource MaterialDesignFont}"
+
+        mc:Ignorable="d">
     <DockPanel Margin="10">
         <TextBlock DockPanel.Dock="Top"  FontSize="40" x:Name="Subject" >Subject:</TextBlock>
         <DockPanel DockPanel.Dock="Top">
@@ -16,14 +23,32 @@
                 <Label x:Name="From" DockPanel.Dock="Top" FontSize="14" Padding="2">From:</Label>
                 <Label x:Name="To" DockPanel.Dock="Top" FontSize="14" Padding="2">To:</Label>
             </DockPanel>
-            <DockPanel DockPanel.Dock="Right">
-                <Label DockPanel.Dock="Top" x:Name="date"></Label>
-            </DockPanel>
-            <DockPanel DockPanel.Dock="Top">
-                <Button Click="replybtnclicl" Padding="0" DockPanel.Dock="Top" MaxHeight="20" MaxWidth="60"  >Reply</Button>
-                <Button Click="forwardbtnclick" Padding="0"   DockPanel.Dock="Top" MaxHeight="20" MaxWidth="60" >Forward</Button>
-            </DockPanel>
+
+            <StackPanel FlowDirection="RightToLeft" Orientation="Vertical" DockPanel.Dock="Right">
+
+                <Label   x:Name="date"></Label>
+                
+            <StackPanel FlowDirection="RightToLeft"  Orientation="Horizontal">
+                <Button
+                    Click="forwardbtnclick"
+                     
+                    DockPanel.Dock="Right"
+                     >
+                    <material:PackIcon Kind="ShareOutline" />
+                </Button>
+                <Button 
+                    Click="replybtnclicl"
+                    
+                    DockPanel.Dock="Right"
+                    >
+                    <material:PackIcon Kind="ReplyOutline" />
+                </Button>
+            </StackPanel>
+            </StackPanel>
         </DockPanel>
+        
+        
+        
         <DockPanel DockPanel.Dock="Left">
             <ListBox x:Name="Attlistbox" MaxWidth="120" >
 
@@ -60,6 +85,6 @@
 
             </ListBox>
         </DockPanel>
-        <TextBox x:Name="Text"></TextBox>
+        <TextBox  x:Name="Text" Margin="10"></TextBox>
     </DockPanel>
 </Window>
